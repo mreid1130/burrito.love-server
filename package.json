@@ -1,0 +1,25 @@
+{
+  "name": "burritolove-server",
+  "main": "app.js",
+  "dependencies": {
+    "async": "^1.4.2",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "~1.4.2",
+    "cheerio": "^0.19.0",
+    "connect-flash": "~0.1.1",
+    "connect-mongo": "^0.8.2",
+    "cookie-parser": "~1.0.1",
+    "cors": "^2.7.1",
+    "cron": "^1.0.9",
+    "ejs": "~0.8.5",
+    "express": "^4.13.3",
+    "express-session": "^1.11.1",
+    "fs": "0.0.2",
+    "jsonwebtoken": "^5.5.0",
+    "method-override": "~2.0.2",
+    "mongoose": "^3.8.36",
+    "morgan": "~1.0.0",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0"
+  }
+}

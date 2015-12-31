@@ -9,41 +9,41 @@ module.exports = function(app) {
       return res.send({
         error: 'missing parameters'
       });
-    }
-
-    async.waterfall([
-      function(callback) {
-        User.findOne({
-          'local.email': req.body.email
-        }).exec(callback);
-      },
-      function(user, callback) {
-        if (!user) {
-          return callback(new Error('email not found'));
-        }
-        if (user.validPassword(req.body.password)) {
-          callback(null, user);
-        } else {
-          callback(new Error('invalid password'));
-        }
-      }
-    ], function(err, data) {
-      if (err) {
-        console.log(err.stack);
-        return res.send({
-          error: err.message
-        });
-      } else {
-        return res.status(200).send({
-          success: {
-            user: data,
-            jwt: jwt.sign(data, 'secret', {
-              expiresIn: '7d'
-            })
+    } else {
+      async.waterfall([
+        function(callback) {
+          User.findOne({
+            'local.email': req.body.email
+          }).exec(callback);
+        },
+        function(user, callback) {
+          if (!user) {
+            return callback(new Error('email not found'));
           }
-        });
-      }
-    })
+          if (user.validPassword(req.body.password)) {
+            callback(null, user);
+          } else {
+            callback(new Error('invalid password'));
+          }
+        }
+      ], function(err, data) {
+        if (err) {
+          console.log(err.stack);
+          return res.send({
+            error: err.message
+          });
+        } else {
+          return res.status(200).send({
+            success: {
+              user: data,
+              jwt: jwt.sign(data, 'secret', {
+                expiresIn: '7d'
+              })
+            }
+          });
+        }
+      });
+    }
   });
 
   app.post('/signup', function(req, res) {
@@ -51,45 +51,46 @@ module.exports = function(app) {
       return res.send({
         error: 'missing parameters'
       });
-    }
-    async.waterfall([
-      function(callback) {
-        User.findOne({
-          'local.email': req.body.email
-        }).exec(callback);
-      },
-      function(user, callback) {
-        if (user) {
+    } else {
+      async.waterfall([
+        function(callback) {
+          User.findOne({
+            'local.email': req.body.email
+          }).exec(callback);
+        },
+        function(user, callback) {
+          if (user) {
+            return res.send({
+              error: 'email already registered'
+            });
+          }
+          user = new User({
+            local: {
+              firstName: req.body.firstName,
+              lastName: req.body.lastName,
+              email: req.body.email
+            }
+          });
+          user.local.password = user.generateHash(req.body.password);
+          user.save(callback);
+        }
+      ], function(err, data) {
+        if (err) {
           return res.send({
-            error: 'email already registered'
+            error: err.message
+          });
+        } else {
+          return res.status(200).send({
+            success: {
+              user: data,
+              jwt: jwt.sign(data, 'secret', {
+                expiresIn: '7d'
+              })
+            }
           });
         }
-        user = new User({
-          local: {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email
-          }
-        });
-        user.local.password = user.generateHash(req.body.password);
-        user.save(callback);
-      }
-    ], function(err, data) {
-      if (err) {
-        return res.send({
-          error: err.message
-        });
-      } else {
-        return res.status(200).send({
-          success: {
-            user: data,
-            jwt: jwt.sign(data, 'secret', {
-              expiresIn: '7d'
-            })
-          }
-        });
-      }
-    });
+      });
+    }
 
   });
 

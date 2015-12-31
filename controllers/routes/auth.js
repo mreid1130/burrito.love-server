@@ -6,7 +6,9 @@ module.exports = function(app) {
 
   app.post('/login', function(req, res, next) {
     if (!req.body.email || !req.body.password) {
-      return res.status(400).send('missing parameters');
+      return res.send({
+        error: 'missing parameters'
+      });
     }
 
     async.waterfall([
@@ -27,11 +29,11 @@ module.exports = function(app) {
       }
     ], function(err, data) {
       if (err) {
-        return res.status(400).send({
+        console.log(err.stack);
+        return res.send({
           error: err.message
         });
       } else {
-        console.log('signup call completed');
         return res.status(200).send({
           success: {
             user: data,
@@ -45,8 +47,10 @@ module.exports = function(app) {
   });
 
   app.post('/signup', function(req, res) {
-    if (!req.body.name || !req.body.email || !req.body.password) {
-      return res.status(400).send('missing parameters');
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
+      return res.send({
+        error: 'missing parameters'
+      });
     }
     async.waterfall([
       function(callback) {
@@ -56,11 +60,14 @@ module.exports = function(app) {
       },
       function(user, callback) {
         if (user) {
-          return res.status(400).send('email already registered');
+          return res.send({
+            error: 'email already registered'
+          });
         }
         user = new User({
           local: {
-            name: req.body.name,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             email: req.body.email
           }
         });
@@ -69,11 +76,10 @@ module.exports = function(app) {
       }
     ], function(err, data) {
       if (err) {
-        return res.status(400).send({
+        return res.send({
           error: err.message
         });
       } else {
-        console.log('signup call completed');
         return res.status(200).send({
           success: {
             user: data,

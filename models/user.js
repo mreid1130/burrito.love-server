@@ -5,7 +5,8 @@ var userSchema = mongoose.Schema({
   local: {
     email: String,
     password: String,
-    name: String
+    firstName: String,
+    lastName: String
   },
   created: {
     type: Date,

@@ -1,32 +1,34 @@
-module.exports = function(io) {
-  var activeSockets = [];
-  io.on('connection', function(socket) {
+var jwt = require('jsonwebtoken');
+module.exports = function(wss) {
 
-    activeSockets.push(socket);
-
-    socket.on('send', function(data) {
-      if (data.message && data.name) {
-        io.sockets.emit('message', {
-          name: data.name,
-          message: data.message
-        });
-        // activeSockets.forEach(function(activeSocket) {
-        //   activeSocket.emit('message', {
-        //     name: data.name,
-        //     message: data.message
-        //   });
-        // });
-      } else {
-        console.log('error getting full message data');
-      }
-    })
-
-    socket.on('disconnect', function() {
-      try {
-        activeSockets.splice(activeSockets.indexOf(socket), 1);
-      } catch (err) {
-        console.log(err);
-      }
+  wss.broadcast = function broadcast(data) {
+    wss.clients.forEach(function each(client) {
+      client.send(data);
     });
+  };
+  // var activeSockets = [];
+
+  wss.on('connection', function connection(ws) {
+
+    ws.on('message', function incoming(message) {
+      try {
+        message = JSON.parse(message);
+      } catch (err) {
+        console.log(err.stack);
+        return false;
+      }
+      console.log(message);
+      if (message.send) {
+        var user = jwt.verify(message.send.jwt, process.env.JWT_SECRET);
+        console.log(user);
+        wss.broadcast(JSON.stringify({
+          name: message.send.name,
+          message: message.send.message
+        }));
+      }
+
+    });
+
   });
-}
+
+};

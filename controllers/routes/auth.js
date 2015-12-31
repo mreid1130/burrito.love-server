@@ -6,7 +6,7 @@ module.exports = function(app) {
 
   app.post('/login', function(req, res, next) {
     if (!req.body.email || !req.body.password) {
-      return res.send({
+      res.send({
         error: 'missing parameters'
       });
     } else {
@@ -29,11 +29,11 @@ module.exports = function(app) {
       ], function(err, data) {
         if (err) {
           console.log(err.stack);
-          return res.send({
+          res.send({
             error: err.message
           });
         } else {
-          return res.status(200).send({
+          res.send({
             success: {
               user: data,
               jwt: jwt.sign(data, 'secret', {
@@ -48,7 +48,7 @@ module.exports = function(app) {
 
   app.post('/signup', function(req, res) {
     if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
-      return res.send({
+      res.send({
         error: 'missing parameters'
       });
     } else {
@@ -74,11 +74,11 @@ module.exports = function(app) {
         }
       ], function(err, data) {
         if (err) {
-          return res.send({
+          res.send({
             error: err.message
           });
         } else {
-          return res.status(200).send({
+          res.send({
             success: {
               user: data,
               jwt: jwt.sign(data, 'secret', {

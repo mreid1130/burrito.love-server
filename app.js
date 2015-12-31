@@ -17,19 +17,21 @@ var fs = require('fs');
 var http = require('http');
 var server = http.createServer(app);
 var WebSocketServer = require('ws').Server;
+var cors = require('cors');
 var wss = new WebSocketServer({
   server: server
 });
 // configuration ===========================================
 require('./config/mongo');
 
+app.use(cors());
 // Allow cross-origin resource sharing
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   next();
+// });
 
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -63,7 +65,6 @@ require('./controllers/routes/index')(app);
 
 // start app ===============================================
 require('./controllers/sockets.js')(wss);
-server.on('request', app);
 server.listen(port);
 
 console.log(server.address());

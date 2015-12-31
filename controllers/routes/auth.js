@@ -60,9 +60,7 @@ module.exports = function(app) {
         },
         function(user, callback) {
           if (user) {
-            return res.send({
-              error: 'email already registered'
-            });
+            return callback(new Error('email already registered'));
           }
           user = new User({
             local: {

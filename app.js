@@ -21,7 +21,13 @@ var fs = require('fs');
 require('./config/mongo');
 
 // Allow cross-origin resource sharing
-app.use(cors());
+// app.use(cors());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5000");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Credentials', 'true')
+  next();
+});
 
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -31,6 +37,13 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.set('view engine', 'ejs');
+
+// socket.io setup
+var server = require('http').Server(app);
+var io = require('socket.io').listen(server);
+
+// server side socket listeners
+require('./controllers/sockets.js')(io);
 
 // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
 app.use(methodOverride('X-HTTP-Method-Override'));
@@ -57,6 +70,7 @@ require('./controllers/routes/index')(app);
 
 // start app ===============================================
 app.listen(port);
+
 console.log('listening on port', port);
 
 exports = module.exports = app;

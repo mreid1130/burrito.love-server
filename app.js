@@ -13,7 +13,6 @@ var MongoStore = require('connect-mongo')({
   session: session
 });
 var methodOverride = require('method-override');
-var cors = require('cors');
 var fs = require('fs');
 var http = require('http');
 var server = http.createServer(app);

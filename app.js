@@ -4,7 +4,6 @@ var express = require('express');
 app = express();
 var port = process.env.PORT || 8080;
 var environment = process.env.NODE_ENV || 'development';
-var passport = require('passport');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');

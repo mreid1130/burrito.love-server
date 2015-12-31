@@ -22,7 +22,7 @@ module.exports = function(app) {
           return callback(new Error('email not found'));
         }
         if (user.validPassword(req.body.password)) {
-          callback(null, user)
+          callback(null, user);
         } else {
           callback(new Error('invalid password'));
         }

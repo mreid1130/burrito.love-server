@@ -51,6 +51,7 @@ app.use(session({
     maxAge: 2419200000
   }
 }));
+var check;
 
 // routes ==================================================
 require('./controllers/routes/index')(app);

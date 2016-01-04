@@ -6,10 +6,8 @@ module.exports = function(wss) {
       client.send(data);
     });
   };
-  // var activeSockets = [];
 
   wss.on('connection', function connection(ws) {
-
     ws.on('message', function incoming(message) {
       try {
         message = JSON.parse(message);
